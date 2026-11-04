@@ -1,0 +1,745 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "input_a.png"
+    },
+    "_meta": {
+      "title": "01 原图"
+    }
+  },
+  "2": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "input_b.png"
+    },
+    "_meta": {
+      "title": "02 同图精修参考"
+    }
+  },
+  "3": {
+    "class_type": "JayouSDRAWAlignPython",
+    "inputs": {
+      "image_a": [
+        "1",
+        0
+      ],
+      "image_b": [
+        "2",
+        0
+      ],
+      "对齐方式": "SIFT + MAGSAC++"
+    },
+    "_meta": {
+      "title": "03 先对齐 · 保留原图尺寸"
+    }
+  },
+  "4": {
+    "class_type": "MaskComposite",
+    "inputs": {
+      "destination": [
+        "3",
+        2
+      ],
+      "source": [
+        "3",
+        2
+      ],
+      "x": 0,
+      "y": 0,
+      "operation": "subtract"
+    },
+    "_meta": {
+      "title": "空蒙版 · 关闭分类使用"
+    }
+  },
+  "5": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": {
+      "ckpt_name": "sam3.1_multiplex_fp16.safetensors"
+    },
+    "_meta": {
+      "title": "SAM3.1 · 共享模型与文本编码器"
+    }
+  },
+  "6": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "window:8, outdoor view:8, open doorway:4",
+      "clip": [
+        "5",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "窗户 / 窗外 / 门外 · 分割对象词"
+    }
+  },
+  "7": {
+    "class_type": "SAM3_Detect",
+    "inputs": {
+      "model": [
+        "5",
+        0
+      ],
+      "image": [
+        "3",
+        0
+      ],
+      "threshold": 0.5,
+      "refine_iterations": 2,
+      "individual_masks": false,
+      "conditioning": [
+        "6",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "窗户 / 窗外 / 门外 · 原图 SAM3"
+    }
+  },
+  "8": {
+    "class_type": "SAM3_Detect",
+    "inputs": {
+      "model": [
+        "5",
+        0
+      ],
+      "image": [
+        "3",
+        1
+      ],
+      "threshold": 0.5,
+      "refine_iterations": 2,
+      "individual_masks": false,
+      "conditioning": [
+        "6",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "窗户 / 窗外 / 门外 · 参考 SAM3"
+    }
+  },
+  "9": {
+    "class_type": "MaskComposite",
+    "inputs": {
+      "destination": [
+        "7",
+        0
+      ],
+      "source": [
+        "8",
+        0
+      ],
+      "x": 0,
+      "y": 0,
+      "operation": "or"
+    },
+    "_meta": {
+      "title": "窗户 / 窗外 / 门外 · 双图并集"
+    }
+  },
+  "10": {
+    "class_type": "Switch mask [Crystools]",
+    "inputs": {
+      "on_true": [
+        "9",
+        0
+      ],
+      "on_false": [
+        "4",
+        0
+      ],
+      "boolean": true
+    },
+    "_meta": {
+      "title": "窗户 / 窗外 / 门外 · 启用开关"
+    }
+  },
+  "11": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "bed:4, pillow:12, duvet:4, bed runner:4",
+      "clip": [
+        "5",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "床与床品 · 分割对象词"
+    }
+  },
+  "12": {
+    "class_type": "SAM3_Detect",
+    "inputs": {
+      "model": [
+        "5",
+        0
+      ],
+      "image": [
+        "3",
+        0
+      ],
+      "threshold": 0.5,
+      "refine_iterations": 2,
+      "individual_masks": false,
+      "conditioning": [
+        "11",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "床与床品 · 原图 SAM3"
+    }
+  },
+  "13": {
+    "class_type": "SAM3_Detect",
+    "inputs": {
+      "model": [
+        "5",
+        0
+      ],
+      "image": [
+        "3",
+        1
+      ],
+      "threshold": 0.5,
+      "refine_iterations": 2,
+      "individual_masks": false,
+      "conditioning": [
+        "11",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "床与床品 · 参考 SAM3"
+    }
+  },
+  "14": {
+    "class_type": "MaskComposite",
+    "inputs": {
+      "destination": [
+        "12",
+        0
+      ],
+      "source": [
+        "13",
+        0
+      ],
+      "x": 0,
+      "y": 0,
+      "operation": "or"
+    },
+    "_meta": {
+      "title": "床与床品 · 双图并集"
+    }
+  },
+  "15": {
+    "class_type": "Switch mask [Crystools]",
+    "inputs": {
+      "on_true": [
+        "14",
+        0
+      ],
+      "on_false": [
+        "4",
+        0
+      ],
+      "boolean": true
+    },
+    "_meta": {
+      "title": "床与床品 · 启用开关"
+    }
+  },
+  "16": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "floor:4",
+      "clip": [
+        "5",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "地面 · 分割对象词"
+    }
+  },
+  "17": {
+    "class_type": "SAM3_Detect",
+    "inputs": {
+      "model": [
+        "5",
+        0
+      ],
+      "image": [
+        "3",
+        0
+      ],
+      "threshold": 0.5,
+      "refine_iterations": 2,
+      "individual_masks": false,
+      "conditioning": [
+        "16",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "地面 · 原图 SAM3"
+    }
+  },
+  "18": {
+    "class_type": "SAM3_Detect",
+    "inputs": {
+      "model": [
+        "5",
+        0
+      ],
+      "image": [
+        "3",
+        1
+      ],
+      "threshold": 0.5,
+      "refine_iterations": 2,
+      "individual_masks": false,
+      "conditioning": [
+        "16",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "地面 · 参考 SAM3"
+    }
+  },
+  "19": {
+    "class_type": "MaskComposite",
+    "inputs": {
+      "destination": [
+        "17",
+        0
+      ],
+      "source": [
+        "18",
+        0
+      ],
+      "x": 0,
+      "y": 0,
+      "operation": "or"
+    },
+    "_meta": {
+      "title": "地面 · 双图并集"
+    }
+  },
+  "20": {
+    "class_type": "Switch mask [Crystools]",
+    "inputs": {
+      "on_true": [
+        "19",
+        0
+      ],
+      "on_false": [
+        "4",
+        0
+      ],
+      "boolean": false
+    },
+    "_meta": {
+      "title": "地面 · 启用开关"
+    }
+  },
+  "21": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "wall:8",
+      "clip": [
+        "5",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "墙面 · 分割对象词"
+    }
+  },
+  "22": {
+    "class_type": "SAM3_Detect",
+    "inputs": {
+      "model": [
+        "5",
+        0
+      ],
+      "image": [
+        "3",
+        0
+      ],
+      "threshold": 0.5,
+      "refine_iterations": 2,
+      "individual_masks": false,
+      "conditioning": [
+        "21",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "墙面 · 原图 SAM3"
+    }
+  },
+  "23": {
+    "class_type": "SAM3_Detect",
+    "inputs": {
+      "model": [
+        "5",
+        0
+      ],
+      "image": [
+        "3",
+        1
+      ],
+      "threshold": 0.5,
+      "refine_iterations": 2,
+      "individual_masks": false,
+      "conditioning": [
+        "21",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "墙面 · 参考 SAM3"
+    }
+  },
+  "24": {
+    "class_type": "MaskComposite",
+    "inputs": {
+      "destination": [
+        "22",
+        0
+      ],
+      "source": [
+        "23",
+        0
+      ],
+      "x": 0,
+      "y": 0,
+      "operation": "or"
+    },
+    "_meta": {
+      "title": "墙面 · 双图并集"
+    }
+  },
+  "25": {
+    "class_type": "Switch mask [Crystools]",
+    "inputs": {
+      "on_true": [
+        "24",
+        0
+      ],
+      "on_false": [
+        "4",
+        0
+      ],
+      "boolean": false
+    },
+    "_meta": {
+      "title": "墙面 · 启用开关"
+    }
+  },
+  "26": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "sky:4",
+      "clip": [
+        "5",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "天空 · 分割对象词"
+    }
+  },
+  "27": {
+    "class_type": "SAM3_Detect",
+    "inputs": {
+      "model": [
+        "5",
+        0
+      ],
+      "image": [
+        "3",
+        0
+      ],
+      "threshold": 0.5,
+      "refine_iterations": 2,
+      "individual_masks": false,
+      "conditioning": [
+        "26",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "天空 · 原图 SAM3"
+    }
+  },
+  "28": {
+    "class_type": "SAM3_Detect",
+    "inputs": {
+      "model": [
+        "5",
+        0
+      ],
+      "image": [
+        "3",
+        1
+      ],
+      "threshold": 0.5,
+      "refine_iterations": 2,
+      "individual_masks": false,
+      "conditioning": [
+        "26",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "天空 · 参考 SAM3"
+    }
+  },
+  "29": {
+    "class_type": "MaskComposite",
+    "inputs": {
+      "destination": [
+        "27",
+        0
+      ],
+      "source": [
+        "28",
+        0
+      ],
+      "x": 0,
+      "y": 0,
+      "operation": "or"
+    },
+    "_meta": {
+      "title": "天空 · 双图并集"
+    }
+  },
+  "30": {
+    "class_type": "Switch mask [Crystools]",
+    "inputs": {
+      "on_true": [
+        "29",
+        0
+      ],
+      "on_false": [
+        "4",
+        0
+      ],
+      "boolean": false
+    },
+    "_meta": {
+      "title": "天空 · 启用开关"
+    }
+  },
+  "31": {
+    "class_type": "MaskComposite",
+    "inputs": {
+      "destination": [
+        "10",
+        0
+      ],
+      "source": [
+        "15",
+        0
+      ],
+      "x": 0,
+      "y": 0,
+      "operation": "or"
+    },
+    "_meta": {
+      "title": "合并选中类别 2"
+    }
+  },
+  "32": {
+    "class_type": "MaskComposite",
+    "inputs": {
+      "destination": [
+        "31",
+        0
+      ],
+      "source": [
+        "20",
+        0
+      ],
+      "x": 0,
+      "y": 0,
+      "operation": "or"
+    },
+    "_meta": {
+      "title": "合并选中类别 3"
+    }
+  },
+  "33": {
+    "class_type": "MaskComposite",
+    "inputs": {
+      "destination": [
+        "32",
+        0
+      ],
+      "source": [
+        "25",
+        0
+      ],
+      "x": 0,
+      "y": 0,
+      "operation": "or"
+    },
+    "_meta": {
+      "title": "合并选中类别 4"
+    }
+  },
+  "34": {
+    "class_type": "MaskComposite",
+    "inputs": {
+      "destination": [
+        "33",
+        0
+      ],
+      "source": [
+        "30",
+        0
+      ],
+      "x": 0,
+      "y": 0,
+      "operation": "or"
+    },
+    "_meta": {
+      "title": "合并选中类别 5"
+    }
+  },
+  "35": {
+    "class_type": "MaskComposite",
+    "inputs": {
+      "destination": [
+        "34",
+        0
+      ],
+      "source": [
+        "3",
+        2
+      ],
+      "x": 0,
+      "y": 0,
+      "operation": "multiply"
+    },
+    "_meta": {
+      "title": "排除参考图越界区域"
+    }
+  },
+  "36": {
+    "class_type": "MaskToImage",
+    "inputs": {
+      "mask": [
+        "35",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "补偿选区预览"
+    }
+  },
+  "37": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "36",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "白色为补偿区域"
+    }
+  },
+  "38": {
+    "class_type": "JayouSDRAWPython",
+    "inputs": {
+      "image_a": [
+        "3",
+        0
+      ],
+      "image_b": [
+        "3",
+        1
+      ],
+      "方式": "参数反求",
+      "对齐": "关闭",
+      "蒙版用途": "替代自动选区",
+      "高光细节补偿": false,
+      "暗部细节补偿": false,
+      "大区域参考补偿": true,
+      "自动差异": false,
+      "边缘类型": "保持分割结果",
+      "扩展收缩像素": 0.0,
+      "羽化像素": 0.0,
+      "小孔洞修复": false,
+      "最大孔洞面积": 64,
+      "颜色柔和过渡": false,
+      "分区精细匹配": false,
+      "精细颜色映射": false,
+      "色彩与对比增强": false,
+      "整体强度": 1.0,
+      "补偿强度": 1.0,
+      "内容补偿强度": 1.0,
+      "原有纹理保留": 1.0,
+      "分析长边": "1024",
+      "局部光影迁移": false,
+      "受光增强": 0.8,
+      "阴影塑形": 0.8,
+      "光影尺度": "均衡",
+      "受光色彩迁移": false,
+      "mask": [
+        "35",
+        0
+      ],
+      "质感精修": false,
+      "质感强度": 0.5
+    },
+    "_meta": {
+      "title": "04 嘉游SDRAW · 外部蒙版处理"
+    }
+  },
+  "39": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "38",
+        0
+      ],
+      "filename_prefix": "JayouSDRAW/result"
+    },
+    "_meta": {
+      "title": "05 保存处理图片"
+    }
+  },
+  "40": {
+    "class_type": "MaskToImage",
+    "inputs": {
+      "mask": [
+        "38",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "实际补偿范围"
+    }
+  },
+  "41": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "40",
+        0
+      ],
+      "filename_prefix": "JayouSDRAW/mask"
+    },
+    "_meta": {
+      "title": "保存实际补偿蒙版"
+    }
+  }
+}

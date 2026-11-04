@@ -38,8 +38,6 @@ def align(source, target):
     import torch
     from lightglue import SIFT, LightGlue
     from lightglue.utils import load_image, rbd
-    torch.set_num_threads(4)
-    cv2.setNumThreads(2)
     # Bounded point count and CPU inference avoid taking memory from the editor GPU.
     extractor=SIFT(max_num_keypoints=2048).eval()
     matcher=LightGlue(features='sift',flash=False).eval()

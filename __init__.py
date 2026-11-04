@@ -1,5 +1,4 @@
-from .nodes import JayouSDRAW
-from .align_node import JayouSDRAWAlign
-NODE_CLASS_MAPPINGS = {"JayouSDRAW": JayouSDRAW, "JayouSDRAWAlign": JayouSDRAWAlign}
-NODE_DISPLAY_NAME_MAPPINGS = {"JayouSDRAW": "嘉游SDRAW", "JayouSDRAWAlign": "嘉游SDRAW · 图像对齐"}
-__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
+from .nodes import JayouSDRAWPython, JayouSDRAWAlignPython
+NODE_CLASS_MAPPINGS = {'JayouSDRAWPython': JayouSDRAWPython, 'JayouSDRAWAlignPython': JayouSDRAWAlignPython}
+NODE_DISPLAY_NAME_MAPPINGS = {'JayouSDRAWPython': '嘉游SDRAW · Python', 'JayouSDRAWAlignPython': '嘉游SDRAW · 对齐 Python'}
+__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']

@@ -1,0 +1,2670 @@
+{
+  "last_node_id": 42,
+  "last_link_id": 77,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "pos": [
+        0,
+        50
+      ],
+      "size": [
+        320,
+        320
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            1
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "title": "01 原图",
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "input_a.png",
+        "image"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "LoadImage",
+      "pos": [
+        0,
+        450
+      ],
+      "size": [
+        320,
+        320
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            2
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "title": "02 同图精修参考",
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "input_b.png",
+        "image"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "JayouSDRAWAlignPython",
+      "pos": [
+        400,
+        50
+      ],
+      "size": [
+        320,
+        164
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image_a",
+          "type": "IMAGE",
+          "link": 1
+        },
+        {
+          "name": "image_b",
+          "type": "IMAGE",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "原图",
+          "type": "IMAGE",
+          "links": [
+            7,
+            18,
+            29,
+            40,
+            51,
+            72
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "对齐参考图",
+          "type": "IMAGE",
+          "links": [
+            10,
+            21,
+            32,
+            43,
+            54,
+            73
+          ],
+          "slot_index": 1
+        },
+        {
+          "name": "有效重叠范围",
+          "type": "MASK",
+          "links": [
+            3,
+            4,
+            69
+          ],
+          "slot_index": 2
+        }
+      ],
+      "title": "嘉游SDRAW · 对齐 Python",
+      "properties": {
+        "Node name for S&R": "JayouSDRAWAlignPython"
+      },
+      "widgets_values": [
+        "SIFT + MAGSAC++"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "MaskComposite",
+      "pos": [
+        400,
+        350
+      ],
+      "size": [
+        320,
+        224
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "destination",
+          "type": "MASK",
+          "link": 3
+        },
+        {
+          "name": "source",
+          "type": "MASK",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            15,
+            26,
+            37,
+            48,
+            59
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "空蒙版 · 关闭分类使用",
+      "properties": {
+        "Node name for S&R": "MaskComposite"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "subtract"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        400,
+        600
+      ],
+      "size": [
+        320,
+        130
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            6,
+            9,
+            17,
+            20,
+            28,
+            31,
+            39,
+            42,
+            50,
+            53
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            5,
+            16,
+            27,
+            38,
+            49
+          ],
+          "slot_index": 1
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [],
+          "slot_index": 2
+        }
+      ],
+      "title": "SAM3.1 · 共享模型与文本编码器",
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "sam3.1_multiplex_fp16.safetensors"
+      ]
+    },
+    {
+      "id": 6,
+      "type": "CLIPTextEncode",
+      "pos": [
+        820,
+        0
+      ],
+      "size": [
+        360,
+        240
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            8,
+            11
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "窗户 / 窗外 / 门外 · 分割对象词",
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "window:8, outdoor view:8, open doorway:4"
+      ]
+    },
+    {
+      "id": 7,
+      "type": "SAM3_Detect",
+      "pos": [
+        1250,
+        0
+      ],
+      "size": [
+        320,
+        246
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 6
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 7
+        },
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "masks",
+          "type": "MASK",
+          "links": [
+            12
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "bboxes",
+          "type": "BOUNDING_BOX",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "title": "窗户 / 窗外 / 门外 · 原图 SAM3",
+      "properties": {
+        "Node name for S&R": "SAM3_Detect"
+      },
+      "widgets_values": [
+        0.5,
+        2,
+        false
+      ]
+    },
+    {
+      "id": 8,
+      "type": "SAM3_Detect",
+      "pos": [
+        1640,
+        0
+      ],
+      "size": [
+        320,
+        246
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 9
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 10
+        },
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 11
+        }
+      ],
+      "outputs": [
+        {
+          "name": "masks",
+          "type": "MASK",
+          "links": [
+            13
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "bboxes",
+          "type": "BOUNDING_BOX",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "title": "窗户 / 窗外 / 门外 · 参考 SAM3",
+      "properties": {
+        "Node name for S&R": "SAM3_Detect"
+      },
+      "widgets_values": [
+        0.5,
+        2,
+        false
+      ]
+    },
+    {
+      "id": 9,
+      "type": "MaskComposite",
+      "pos": [
+        2030,
+        0
+      ],
+      "size": [
+        320,
+        224
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "destination",
+          "type": "MASK",
+          "link": 12
+        },
+        {
+          "name": "source",
+          "type": "MASK",
+          "link": 13
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            14
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "窗户 / 窗外 / 门外 · 双图并集",
+      "properties": {
+        "Node name for S&R": "MaskComposite"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "or"
+      ]
+    },
+    {
+      "id": 10,
+      "type": "Switch mask [Crystools]",
+      "pos": [
+        2420,
+        0
+      ],
+      "size": [
+        320,
+        164
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "on_true",
+          "type": "MASK",
+          "link": 14
+        },
+        {
+          "name": "on_false",
+          "type": "MASK",
+          "link": 15
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            60
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "窗户 / 窗外 / 门外 · 启用开关",
+      "properties": {
+        "Node name for S&R": "Switch mask [Crystools]"
+      },
+      "widgets_values": [
+        true
+      ]
+    },
+    {
+      "id": 11,
+      "type": "CLIPTextEncode",
+      "pos": [
+        820,
+        430
+      ],
+      "size": [
+        360,
+        240
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 16
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            19,
+            22
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "床与床品 · 分割对象词",
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "bed:4, pillow:12, duvet:4, bed runner:4"
+      ]
+    },
+    {
+      "id": 12,
+      "type": "SAM3_Detect",
+      "pos": [
+        1250,
+        430
+      ],
+      "size": [
+        320,
+        246
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 17
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 18
+        },
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 19
+        }
+      ],
+      "outputs": [
+        {
+          "name": "masks",
+          "type": "MASK",
+          "links": [
+            23
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "bboxes",
+          "type": "BOUNDING_BOX",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "title": "床与床品 · 原图 SAM3",
+      "properties": {
+        "Node name for S&R": "SAM3_Detect"
+      },
+      "widgets_values": [
+        0.5,
+        2,
+        false
+      ]
+    },
+    {
+      "id": 13,
+      "type": "SAM3_Detect",
+      "pos": [
+        1640,
+        430
+      ],
+      "size": [
+        320,
+        246
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 20
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 21
+        },
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 22
+        }
+      ],
+      "outputs": [
+        {
+          "name": "masks",
+          "type": "MASK",
+          "links": [
+            24
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "bboxes",
+          "type": "BOUNDING_BOX",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "title": "床与床品 · 参考 SAM3",
+      "properties": {
+        "Node name for S&R": "SAM3_Detect"
+      },
+      "widgets_values": [
+        0.5,
+        2,
+        false
+      ]
+    },
+    {
+      "id": 14,
+      "type": "MaskComposite",
+      "pos": [
+        2030,
+        430
+      ],
+      "size": [
+        320,
+        224
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "destination",
+          "type": "MASK",
+          "link": 23
+        },
+        {
+          "name": "source",
+          "type": "MASK",
+          "link": 24
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            25
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "床与床品 · 双图并集",
+      "properties": {
+        "Node name for S&R": "MaskComposite"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "or"
+      ]
+    },
+    {
+      "id": 15,
+      "type": "Switch mask [Crystools]",
+      "pos": [
+        2420,
+        430
+      ],
+      "size": [
+        320,
+        164
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "on_true",
+          "type": "MASK",
+          "link": 25
+        },
+        {
+          "name": "on_false",
+          "type": "MASK",
+          "link": 26
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            61
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "床与床品 · 启用开关",
+      "properties": {
+        "Node name for S&R": "Switch mask [Crystools]"
+      },
+      "widgets_values": [
+        true
+      ]
+    },
+    {
+      "id": 16,
+      "type": "CLIPTextEncode",
+      "pos": [
+        820,
+        860
+      ],
+      "size": [
+        360,
+        240
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 27
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            30,
+            33
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "地面 · 分割对象词",
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "floor:4"
+      ]
+    },
+    {
+      "id": 17,
+      "type": "SAM3_Detect",
+      "pos": [
+        1250,
+        860
+      ],
+      "size": [
+        320,
+        246
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 28
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 29
+        },
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 30
+        }
+      ],
+      "outputs": [
+        {
+          "name": "masks",
+          "type": "MASK",
+          "links": [
+            34
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "bboxes",
+          "type": "BOUNDING_BOX",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "title": "地面 · 原图 SAM3",
+      "properties": {
+        "Node name for S&R": "SAM3_Detect"
+      },
+      "widgets_values": [
+        0.5,
+        2,
+        false
+      ]
+    },
+    {
+      "id": 18,
+      "type": "SAM3_Detect",
+      "pos": [
+        1640,
+        860
+      ],
+      "size": [
+        320,
+        246
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 31
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 32
+        },
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 33
+        }
+      ],
+      "outputs": [
+        {
+          "name": "masks",
+          "type": "MASK",
+          "links": [
+            35
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "bboxes",
+          "type": "BOUNDING_BOX",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "title": "地面 · 参考 SAM3",
+      "properties": {
+        "Node name for S&R": "SAM3_Detect"
+      },
+      "widgets_values": [
+        0.5,
+        2,
+        false
+      ]
+    },
+    {
+      "id": 19,
+      "type": "MaskComposite",
+      "pos": [
+        2030,
+        860
+      ],
+      "size": [
+        320,
+        224
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "destination",
+          "type": "MASK",
+          "link": 34
+        },
+        {
+          "name": "source",
+          "type": "MASK",
+          "link": 35
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            36
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "地面 · 双图并集",
+      "properties": {
+        "Node name for S&R": "MaskComposite"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "or"
+      ]
+    },
+    {
+      "id": 20,
+      "type": "Switch mask [Crystools]",
+      "pos": [
+        2420,
+        860
+      ],
+      "size": [
+        320,
+        164
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "on_true",
+          "type": "MASK",
+          "link": 36
+        },
+        {
+          "name": "on_false",
+          "type": "MASK",
+          "link": 37
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            63
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "地面 · 启用开关",
+      "properties": {
+        "Node name for S&R": "Switch mask [Crystools]"
+      },
+      "widgets_values": [
+        false
+      ]
+    },
+    {
+      "id": 21,
+      "type": "CLIPTextEncode",
+      "pos": [
+        820,
+        1290
+      ],
+      "size": [
+        360,
+        240
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 38
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            41,
+            44
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "墙面 · 分割对象词",
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "wall:8"
+      ]
+    },
+    {
+      "id": 22,
+      "type": "SAM3_Detect",
+      "pos": [
+        1250,
+        1290
+      ],
+      "size": [
+        320,
+        246
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 39
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 40
+        },
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 41
+        }
+      ],
+      "outputs": [
+        {
+          "name": "masks",
+          "type": "MASK",
+          "links": [
+            45
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "bboxes",
+          "type": "BOUNDING_BOX",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "title": "墙面 · 原图 SAM3",
+      "properties": {
+        "Node name for S&R": "SAM3_Detect"
+      },
+      "widgets_values": [
+        0.5,
+        2,
+        false
+      ]
+    },
+    {
+      "id": 23,
+      "type": "SAM3_Detect",
+      "pos": [
+        1640,
+        1290
+      ],
+      "size": [
+        320,
+        246
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 42
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 43
+        },
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 44
+        }
+      ],
+      "outputs": [
+        {
+          "name": "masks",
+          "type": "MASK",
+          "links": [
+            46
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "bboxes",
+          "type": "BOUNDING_BOX",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "title": "墙面 · 参考 SAM3",
+      "properties": {
+        "Node name for S&R": "SAM3_Detect"
+      },
+      "widgets_values": [
+        0.5,
+        2,
+        false
+      ]
+    },
+    {
+      "id": 24,
+      "type": "MaskComposite",
+      "pos": [
+        2030,
+        1290
+      ],
+      "size": [
+        320,
+        224
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "destination",
+          "type": "MASK",
+          "link": 45
+        },
+        {
+          "name": "source",
+          "type": "MASK",
+          "link": 46
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            47
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "墙面 · 双图并集",
+      "properties": {
+        "Node name for S&R": "MaskComposite"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "or"
+      ]
+    },
+    {
+      "id": 25,
+      "type": "Switch mask [Crystools]",
+      "pos": [
+        2420,
+        1290
+      ],
+      "size": [
+        320,
+        164
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "on_true",
+          "type": "MASK",
+          "link": 47
+        },
+        {
+          "name": "on_false",
+          "type": "MASK",
+          "link": 48
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            65
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "墙面 · 启用开关",
+      "properties": {
+        "Node name for S&R": "Switch mask [Crystools]"
+      },
+      "widgets_values": [
+        false
+      ]
+    },
+    {
+      "id": 26,
+      "type": "CLIPTextEncode",
+      "pos": [
+        820,
+        1720
+      ],
+      "size": [
+        360,
+        240
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 49
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            52,
+            55
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "天空 · 分割对象词",
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "sky:4"
+      ]
+    },
+    {
+      "id": 27,
+      "type": "SAM3_Detect",
+      "pos": [
+        1250,
+        1720
+      ],
+      "size": [
+        320,
+        246
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 50
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 51
+        },
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 52
+        }
+      ],
+      "outputs": [
+        {
+          "name": "masks",
+          "type": "MASK",
+          "links": [
+            56
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "bboxes",
+          "type": "BOUNDING_BOX",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "title": "天空 · 原图 SAM3",
+      "properties": {
+        "Node name for S&R": "SAM3_Detect"
+      },
+      "widgets_values": [
+        0.5,
+        2,
+        false
+      ]
+    },
+    {
+      "id": 28,
+      "type": "SAM3_Detect",
+      "pos": [
+        1640,
+        1720
+      ],
+      "size": [
+        320,
+        246
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 53
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 54
+        },
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 55
+        }
+      ],
+      "outputs": [
+        {
+          "name": "masks",
+          "type": "MASK",
+          "links": [
+            57
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "bboxes",
+          "type": "BOUNDING_BOX",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "title": "天空 · 参考 SAM3",
+      "properties": {
+        "Node name for S&R": "SAM3_Detect"
+      },
+      "widgets_values": [
+        0.5,
+        2,
+        false
+      ]
+    },
+    {
+      "id": 29,
+      "type": "MaskComposite",
+      "pos": [
+        2030,
+        1720
+      ],
+      "size": [
+        320,
+        224
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "destination",
+          "type": "MASK",
+          "link": 56
+        },
+        {
+          "name": "source",
+          "type": "MASK",
+          "link": 57
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            58
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "天空 · 双图并集",
+      "properties": {
+        "Node name for S&R": "MaskComposite"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "or"
+      ]
+    },
+    {
+      "id": 30,
+      "type": "Switch mask [Crystools]",
+      "pos": [
+        2420,
+        1720
+      ],
+      "size": [
+        320,
+        164
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "on_true",
+          "type": "MASK",
+          "link": 58
+        },
+        {
+          "name": "on_false",
+          "type": "MASK",
+          "link": 59
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            67
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "天空 · 启用开关",
+      "properties": {
+        "Node name for S&R": "Switch mask [Crystools]"
+      },
+      "widgets_values": [
+        false
+      ]
+    },
+    {
+      "id": 31,
+      "type": "MaskComposite",
+      "pos": [
+        2820,
+        0
+      ],
+      "size": [
+        320,
+        224
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "destination",
+          "type": "MASK",
+          "link": 60
+        },
+        {
+          "name": "source",
+          "type": "MASK",
+          "link": 61
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            62
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "合并选中类别 2",
+      "properties": {
+        "Node name for S&R": "MaskComposite"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "or"
+      ]
+    },
+    {
+      "id": 32,
+      "type": "MaskComposite",
+      "pos": [
+        2820,
+        270
+      ],
+      "size": [
+        320,
+        224
+      ],
+      "flags": {},
+      "order": 31,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "destination",
+          "type": "MASK",
+          "link": 62
+        },
+        {
+          "name": "source",
+          "type": "MASK",
+          "link": 63
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            64
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "合并选中类别 3",
+      "properties": {
+        "Node name for S&R": "MaskComposite"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "or"
+      ]
+    },
+    {
+      "id": 33,
+      "type": "MaskComposite",
+      "pos": [
+        2820,
+        540
+      ],
+      "size": [
+        320,
+        224
+      ],
+      "flags": {},
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "destination",
+          "type": "MASK",
+          "link": 64
+        },
+        {
+          "name": "source",
+          "type": "MASK",
+          "link": 65
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            66
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "合并选中类别 4",
+      "properties": {
+        "Node name for S&R": "MaskComposite"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "or"
+      ]
+    },
+    {
+      "id": 34,
+      "type": "MaskComposite",
+      "pos": [
+        2820,
+        810
+      ],
+      "size": [
+        320,
+        224
+      ],
+      "flags": {},
+      "order": 33,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "destination",
+          "type": "MASK",
+          "link": 66
+        },
+        {
+          "name": "source",
+          "type": "MASK",
+          "link": 67
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            68
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "合并选中类别 5",
+      "properties": {
+        "Node name for S&R": "MaskComposite"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "or"
+      ]
+    },
+    {
+      "id": 35,
+      "type": "MaskComposite",
+      "pos": [
+        3200,
+        50
+      ],
+      "size": [
+        320,
+        224
+      ],
+      "flags": {},
+      "order": 34,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "destination",
+          "type": "MASK",
+          "link": 68
+        },
+        {
+          "name": "source",
+          "type": "MASK",
+          "link": 69
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            70,
+            74
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "排除参考图越界区域",
+      "properties": {
+        "Node name for S&R": "MaskComposite"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "multiply"
+      ]
+    },
+    {
+      "id": 36,
+      "type": "MaskToImage",
+      "pos": [
+        3200,
+        340
+      ],
+      "size": [
+        320,
+        130
+      ],
+      "flags": {},
+      "order": 35,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 70
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            71
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "补偿选区预览",
+      "properties": {
+        "Node name for S&R": "MaskToImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 37,
+      "type": "PreviewImage",
+      "pos": [
+        3200,
+        520
+      ],
+      "size": [
+        320,
+        320
+      ],
+      "flags": {},
+      "order": 36,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 71
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [],
+          "slot_index": 0
+        }
+      ],
+      "title": "白色为补偿区域",
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 38,
+      "type": "JayouSDRAWPython",
+      "pos": [
+        3620,
+        50
+      ],
+      "size": [
+        420,
+        1086
+      ],
+      "flags": {},
+      "order": 37,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image_a",
+          "type": "IMAGE",
+          "link": 72
+        },
+        {
+          "name": "image_b",
+          "type": "IMAGE",
+          "link": 73
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 74
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            75
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            76
+          ],
+          "slot_index": 1
+        }
+      ],
+      "title": "嘉游SDRAW · Python",
+      "properties": {
+        "Node name for S&R": "JayouSDRAWPython"
+      },
+      "widgets_values": [
+        "参数反求",
+        "关闭",
+        "替代自动选区",
+        false,
+        false,
+        true,
+        false,
+        "保持分割结果",
+        0.0,
+        0.0,
+        false,
+        64,
+        false,
+        false,
+        false,
+        false,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        "1024",
+        false,
+        0.8,
+        0.8,
+        "均衡",
+        false,
+        false,
+        0.5
+      ]
+    },
+    {
+      "id": 39,
+      "type": "SaveImage",
+      "pos": [
+        4120,
+        50
+      ],
+      "size": [
+        320,
+        320
+      ],
+      "flags": {},
+      "order": 38,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 75
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [],
+          "slot_index": 0
+        }
+      ],
+      "title": "05 保存处理图片",
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "JayouSDRAW/result"
+      ]
+    },
+    {
+      "id": 40,
+      "type": "MaskToImage",
+      "pos": [
+        4120,
+        400
+      ],
+      "size": [
+        320,
+        130
+      ],
+      "flags": {},
+      "order": 39,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 76
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            77
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "实际补偿范围",
+      "properties": {
+        "Node name for S&R": "MaskToImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 41,
+      "type": "SaveImage",
+      "pos": [
+        4120,
+        600
+      ],
+      "size": [
+        320,
+        320
+      ],
+      "flags": {},
+      "order": 40,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 77
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [],
+          "slot_index": 0
+        }
+      ],
+      "title": "保存实际补偿蒙版",
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "JayouSDRAW/mask"
+      ]
+    },
+    {
+      "id": 42,
+      "type": "Note",
+      "pos": [
+        0,
+        890
+      ],
+      "size": [
+        740,
+        290
+      ],
+      "flags": {},
+      "order": 41,
+      "mode": 0,
+      "title": "使用步骤",
+      "properties": {},
+      "widgets_values": [
+        "Python 原生版本。先选择两张输入图片，并确认本机模型名称。SAM 输出在原图坐标系合并后接入主节点 MASK。外部对齐后，主节点内部对齐保持关闭。"
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      3,
+      0,
+      "IMAGE"
+    ],
+    [
+      2,
+      2,
+      0,
+      3,
+      1,
+      "IMAGE"
+    ],
+    [
+      3,
+      3,
+      2,
+      4,
+      0,
+      "MASK"
+    ],
+    [
+      4,
+      3,
+      2,
+      4,
+      1,
+      "MASK"
+    ],
+    [
+      5,
+      5,
+      1,
+      6,
+      0,
+      "CLIP"
+    ],
+    [
+      6,
+      5,
+      0,
+      7,
+      0,
+      "MODEL"
+    ],
+    [
+      7,
+      3,
+      0,
+      7,
+      1,
+      "IMAGE"
+    ],
+    [
+      8,
+      6,
+      0,
+      7,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      9,
+      5,
+      0,
+      8,
+      0,
+      "MODEL"
+    ],
+    [
+      10,
+      3,
+      1,
+      8,
+      1,
+      "IMAGE"
+    ],
+    [
+      11,
+      6,
+      0,
+      8,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      12,
+      7,
+      0,
+      9,
+      0,
+      "MASK"
+    ],
+    [
+      13,
+      8,
+      0,
+      9,
+      1,
+      "MASK"
+    ],
+    [
+      14,
+      9,
+      0,
+      10,
+      0,
+      "MASK"
+    ],
+    [
+      15,
+      4,
+      0,
+      10,
+      1,
+      "MASK"
+    ],
+    [
+      16,
+      5,
+      1,
+      11,
+      0,
+      "CLIP"
+    ],
+    [
+      17,
+      5,
+      0,
+      12,
+      0,
+      "MODEL"
+    ],
+    [
+      18,
+      3,
+      0,
+      12,
+      1,
+      "IMAGE"
+    ],
+    [
+      19,
+      11,
+      0,
+      12,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      20,
+      5,
+      0,
+      13,
+      0,
+      "MODEL"
+    ],
+    [
+      21,
+      3,
+      1,
+      13,
+      1,
+      "IMAGE"
+    ],
+    [
+      22,
+      11,
+      0,
+      13,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      23,
+      12,
+      0,
+      14,
+      0,
+      "MASK"
+    ],
+    [
+      24,
+      13,
+      0,
+      14,
+      1,
+      "MASK"
+    ],
+    [
+      25,
+      14,
+      0,
+      15,
+      0,
+      "MASK"
+    ],
+    [
+      26,
+      4,
+      0,
+      15,
+      1,
+      "MASK"
+    ],
+    [
+      27,
+      5,
+      1,
+      16,
+      0,
+      "CLIP"
+    ],
+    [
+      28,
+      5,
+      0,
+      17,
+      0,
+      "MODEL"
+    ],
+    [
+      29,
+      3,
+      0,
+      17,
+      1,
+      "IMAGE"
+    ],
+    [
+      30,
+      16,
+      0,
+      17,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      31,
+      5,
+      0,
+      18,
+      0,
+      "MODEL"
+    ],
+    [
+      32,
+      3,
+      1,
+      18,
+      1,
+      "IMAGE"
+    ],
+    [
+      33,
+      16,
+      0,
+      18,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      34,
+      17,
+      0,
+      19,
+      0,
+      "MASK"
+    ],
+    [
+      35,
+      18,
+      0,
+      19,
+      1,
+      "MASK"
+    ],
+    [
+      36,
+      19,
+      0,
+      20,
+      0,
+      "MASK"
+    ],
+    [
+      37,
+      4,
+      0,
+      20,
+      1,
+      "MASK"
+    ],
+    [
+      38,
+      5,
+      1,
+      21,
+      0,
+      "CLIP"
+    ],
+    [
+      39,
+      5,
+      0,
+      22,
+      0,
+      "MODEL"
+    ],
+    [
+      40,
+      3,
+      0,
+      22,
+      1,
+      "IMAGE"
+    ],
+    [
+      41,
+      21,
+      0,
+      22,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      42,
+      5,
+      0,
+      23,
+      0,
+      "MODEL"
+    ],
+    [
+      43,
+      3,
+      1,
+      23,
+      1,
+      "IMAGE"
+    ],
+    [
+      44,
+      21,
+      0,
+      23,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      45,
+      22,
+      0,
+      24,
+      0,
+      "MASK"
+    ],
+    [
+      46,
+      23,
+      0,
+      24,
+      1,
+      "MASK"
+    ],
+    [
+      47,
+      24,
+      0,
+      25,
+      0,
+      "MASK"
+    ],
+    [
+      48,
+      4,
+      0,
+      25,
+      1,
+      "MASK"
+    ],
+    [
+      49,
+      5,
+      1,
+      26,
+      0,
+      "CLIP"
+    ],
+    [
+      50,
+      5,
+      0,
+      27,
+      0,
+      "MODEL"
+    ],
+    [
+      51,
+      3,
+      0,
+      27,
+      1,
+      "IMAGE"
+    ],
+    [
+      52,
+      26,
+      0,
+      27,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      53,
+      5,
+      0,
+      28,
+      0,
+      "MODEL"
+    ],
+    [
+      54,
+      3,
+      1,
+      28,
+      1,
+      "IMAGE"
+    ],
+    [
+      55,
+      26,
+      0,
+      28,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      56,
+      27,
+      0,
+      29,
+      0,
+      "MASK"
+    ],
+    [
+      57,
+      28,
+      0,
+      29,
+      1,
+      "MASK"
+    ],
+    [
+      58,
+      29,
+      0,
+      30,
+      0,
+      "MASK"
+    ],
+    [
+      59,
+      4,
+      0,
+      30,
+      1,
+      "MASK"
+    ],
+    [
+      60,
+      10,
+      0,
+      31,
+      0,
+      "MASK"
+    ],
+    [
+      61,
+      15,
+      0,
+      31,
+      1,
+      "MASK"
+    ],
+    [
+      62,
+      31,
+      0,
+      32,
+      0,
+      "MASK"
+    ],
+    [
+      63,
+      20,
+      0,
+      32,
+      1,
+      "MASK"
+    ],
+    [
+      64,
+      32,
+      0,
+      33,
+      0,
+      "MASK"
+    ],
+    [
+      65,
+      25,
+      0,
+      33,
+      1,
+      "MASK"
+    ],
+    [
+      66,
+      33,
+      0,
+      34,
+      0,
+      "MASK"
+    ],
+    [
+      67,
+      30,
+      0,
+      34,
+      1,
+      "MASK"
+    ],
+    [
+      68,
+      34,
+      0,
+      35,
+      0,
+      "MASK"
+    ],
+    [
+      69,
+      3,
+      2,
+      35,
+      1,
+      "MASK"
+    ],
+    [
+      70,
+      35,
+      0,
+      36,
+      0,
+      "MASK"
+    ],
+    [
+      71,
+      36,
+      0,
+      37,
+      0,
+      "IMAGE"
+    ],
+    [
+      72,
+      3,
+      0,
+      38,
+      0,
+      "IMAGE"
+    ],
+    [
+      73,
+      3,
+      1,
+      38,
+      1,
+      "IMAGE"
+    ],
+    [
+      74,
+      35,
+      0,
+      38,
+      2,
+      "MASK"
+    ],
+    [
+      75,
+      38,
+      0,
+      39,
+      0,
+      "IMAGE"
+    ],
+    [
+      76,
+      38,
+      1,
+      40,
+      0,
+      "MASK"
+    ],
+    [
+      77,
+      40,
+      0,
+      41,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [
+    {
+      "title": "对齐与模型",
+      "bounding": [
+        -30,
+        -30,
+        800,
+        1050
+      ],
+      "color": "#3f5966",
+      "font_size": 24
+    },
+    {
+      "title": "双图 SAM3 · 分类开关（关闭的分类不运行）",
+      "bounding": [
+        780,
+        -45,
+        2010,
+        2220
+      ],
+      "color": "#4b6351",
+      "font_size": 24
+    },
+    {
+      "title": "合并、范围检查、处理与保存",
+      "bounding": [
+        2780,
+        -40,
+        1750,
+        2220
+      ],
+      "color": "#655946",
+      "font_size": 24
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.45,
+      "offset": [
+        100,
+        100
+      ]
+    }
+  },
+  "version": 0.4
+}
